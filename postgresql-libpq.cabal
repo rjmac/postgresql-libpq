@@ -1,5 +1,5 @@
 Name:                postgresql-libpq
-Version:             0.8.2.3
+Version:             0.9.0.0
 Synopsis:            low-level binding to libpq
 
 Description:         This is a binding to libpq: the C application
@@ -39,7 +39,10 @@ Library
                      , bytestring
 
   GHC-Options:       -Wall
-  Extra-Libraries:   pq
+  Extra-Libraries: pq
+  if os(openbsd)
+    Extra-Libraries:  crypto ssl com_err asn1 krb5 wind roken heimbase
+
   -- Other-modules:
   Build-tools:       hsc2hs
 
@@ -50,4 +53,4 @@ source-repository head
 source-repository this
   type:     git
   location: http://github.com/lpsmith/postgresql-libpq
-  tag:      v0.8.2.3
+  tag:      v0.9.0.0
