@@ -152,7 +152,7 @@ execFinish connection = flushOutput connection >> awaitResult Nothing
         appendErrors r1 r2 = do
           e1 <- fromMaybe "" `fmap` resultErrorMessage r1
           e2 <- fromMaybe "" `fmap` resultErrorMessage r2
-          setResultError r1 (e1 `B.append` e2)
+          setResultError r1 (Just $ e1 `B.append` e2)
           e <- resultErrorMessage r1
           setErrorMessage connection (fromMaybe "" e)
         finishHandlingResult :: Result -> IO (Maybe Result)
