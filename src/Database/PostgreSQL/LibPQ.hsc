@@ -243,6 +243,8 @@ import qualified Control.Exception
 mask_ = Control.Exception.block
 #endif
 
+import Database.PostgreSQL.LibPQ.Internal
+
 -- $dbconn
 -- The following functions deal with making a connection to a
 -- PostgreSQL backend server. An application program can have several
@@ -252,10 +254,6 @@ mask_ = Control.Exception.block
 -- 'connectStart'. The 'status' function should be called to check
 -- whether a connection was successfully made before queries are sent
 -- via the connection object.
-
--- | 'Connection' encapsulates a connection to the backend.
-newtype Connection = Conn (ForeignPtr PGconn) deriving Eq
-data PGconn
 
 -- | Makes a new connection to the database server.
 --
@@ -692,13 +690,6 @@ connectionUsedPassword connection =
 -- Once a connection to a database server has been successfully
 -- established, the functions described here are used to perform SQL
 -- queries and commands.
-
--- | 'Result' encapsulates the result of a query (or more precisely,
--- of a single SQL command --- a query string given to 'sendQuery' can
--- contain multiple commands and thus return multiple instances of
--- 'Result'.
-newtype Result = Result (ForeignPtr PGresult) deriving (Eq, Show)
-data PGresult
 
 data Format = Text | Binary deriving (Eq, Ord, Show, Enum)
 
@@ -1986,18 +1977,6 @@ setErrorVerbosity connection verbosity =
     enumFromConn connection $ \p ->
         c_PQsetErrorVerbosity p $ fromIntegral $ fromEnum verbosity
 
-withConn :: Connection
-         -> (Ptr PGconn -> IO b)
-         -> IO b
-withConn (Conn !fp) f = withForeignPtr fp f
-
-
-enumFromConn :: (Integral a, Enum b) => Connection
-             -> (Ptr PGconn -> IO a)
-             -> IO b
-enumFromConn connection f = fmap (toEnum . fromIntegral) $ withConn connection f
-
-
 resultFromConn :: Connection
                -> (Ptr PGconn -> IO (Ptr PGresult))
                -> IO (Maybe Result)
@@ -2006,12 +1985,6 @@ resultFromConn connection f =
        if resPtr == nullPtr
            then return Nothing
            else (Just . Result) `fmap` newForeignPtr p_PQclear resPtr
-
-
-withResult :: Result
-           -> (Ptr PGresult -> IO b)
-           -> IO b
-withResult (Result fp) f = withForeignPtr fp f
 
 
 numFromResult :: (Integral a, Num b) => Result

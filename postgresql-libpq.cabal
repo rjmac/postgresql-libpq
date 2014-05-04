@@ -34,6 +34,8 @@ Library
 
   Exposed-modules:     Database.PostgreSQL.LibPQ
                        Database.PostgreSQL.LibPQ.GHC
+  Other-modules:       Database.PostgreSQL.LibPQ.Internal
+                       Database.PostgreSQL.LibPQ.PQExpBuffer
 
   Build-depends:       base >= 4 && < 5
                      , bytestring

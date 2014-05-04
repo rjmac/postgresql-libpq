@@ -29,11 +29,12 @@ psqlBuildInfo lbi = do
   let pgconfig = rawSystemProgramStdout verbosity pgconfigProg
 
   incDir <- pgconfig ["--includedir"]
+  serverIncDir <- pgconfig ["--includedir-server"]
   libDir <- pgconfig ["--libdir"]
 
   return emptyBuildInfo {
     extraLibDirs = [strip libDir],
-    includeDirs  = [strip incDir]
+    includeDirs  = [strip incDir, strip serverIncDir]
   }
   where
     verbosity = normal -- honestly, this is a hack
