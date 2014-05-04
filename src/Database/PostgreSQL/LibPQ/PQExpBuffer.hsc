@@ -15,7 +15,7 @@ import Foreign
 import Foreign.C.Types
 import qualified Data.ByteString.Internal as B
 
-#include <pg_config_manual.h>
+#include <internal/c.h>
 #include <internal/pqexpbuffer.h>
 
 data PQExpBufferData
